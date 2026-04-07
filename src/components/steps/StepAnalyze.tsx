@@ -90,16 +90,16 @@ export default function StepAnalyze({ data, isLoading }: StepProps) {
                   </div>
                   <span className="text-xs font-mono text-[var(--accent-green)]">{String(score.score)}</span>
                 </div>
-                {score.strengths && Array.isArray(score.strengths) && ((score.strengths as string[]).length > 0 ? (
-                  <p className="text-[10px] text-[var(--text-muted)] mt-1.5">
-                    优势：{(score.strengths as string[]).join('；')}
-                  </p>
-                ) : null)}
-                {score.weaknesses && Array.isArray(score.weaknesses) && ((score.weaknesses as string[]).length > 0 ? (
-                  <p className="text-[10px] text-[var(--text-muted)]">
-                    不足：{(score.weaknesses as string[]).join('；')}
-                  </p>
-                ) : null)}
+                {(() => {
+                  const s = Array.isArray(score.strengths) ? (score.strengths as string[]) : [];
+                  const w = Array.isArray(score.weaknesses) ? (score.weaknesses as string[]) : [];
+                  return (s.length > 0 || w.length > 0) ? (
+                    <>
+                      {s.length > 0 && <p className="text-[10px] text-[var(--text-muted)] mt-1.5">优势：{s.join('；')}</p>}
+                      {w.length > 0 && <p className="text-[10px] text-[var(--text-muted)]">不足：{w.join('；')}</p>}
+                    </>
+                  ) : null;
+                })()}
               </div>
             ))}
           </div>
