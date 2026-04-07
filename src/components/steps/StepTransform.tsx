@@ -1,6 +1,7 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
+import { when } from '@/lib/render';
 
 interface StepProps {
   data?: Record<string, unknown>;
@@ -144,11 +145,11 @@ export default function StepTransform({ data, isLoading }: StepProps) {
                       方案B{recommended === 'b' ? ' (推荐)' : ''}: {String(schemeB.description || '')}
                     </p>
                   )}
-                  {c.rationale && (
+                  {when(c.rationale, (v) => (
                     <p className="text-xs text-[var(--text-muted)] mt-1">
-                      理由: {String(c.rationale)}
+                      理由: {String(v)}
                     </p>
-                  )}
+                  ))}
                 </div>
               );
             })}

@@ -2,6 +2,7 @@
 
 import { Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
+import { when } from '@/lib/render';
 
 interface StepProps {
   data?: Record<string, unknown>;
@@ -64,12 +65,12 @@ function SmartSystemList({ systems }: { systems: Array<Record<string, unknown>> 
         {displayItems.map((sys, idx) => (
           <div key={idx} className="text-xs text-[var(--text-secondary)] pl-2 border-l-2 border-[var(--accent-blue)]/30">
             <span className="text-[var(--text-primary)]">{String(sys.system || sys.name || '')}</span>
-            {sys.functions && (
-              <div className="text-[10px] text-[var(--text-muted)]">{String((sys.functions as string[]).join('、'))}</div>
-            )}
-            {sys.control && (
-              <span className="text-[10px] text-[var(--accent-blue)] ml-1">[{String(sys.control)}]</span>
-            )}
+            {when(sys.functions, (v) => (
+              <div className="text-[10px] text-[var(--text-muted)]">{String((v as string[]).join('、'))}</div>
+            ))}
+            {when(sys.control, (v) => (
+              <span className="text-[10px] text-[var(--accent-blue)] ml-1">[{String(v)}]</span>
+            ))}
           </div>
         ))}
       </div>
@@ -131,7 +132,7 @@ export default function StepGenerate({ data, isLoading }: StepProps) {
             </div>
           ) : null}
           <div className="space-y-3">
-            {spaces.map((space, i) => {
+            {spaces?.map((space, i) => {
               const hardFinish = space.hard_finish as Array<Record<string, string>> | undefined;
               const softFurnish = space.soft_furnish as Array<Record<string, string>> | undefined;
               const smartSystems = space.smart_systems as Array<Record<string, unknown>> | undefined;
@@ -236,12 +237,12 @@ export default function StepGenerate({ data, isLoading }: StepProps) {
               );
             })}
           </div>
-          {manual?.design_philosophy && (
+          {when(manual?.design_philosophy, (v) => (
             <div className="mt-3 p-3 rounded-lg bg-[var(--bg-primary)] border border-[var(--border)]">
               <h5 className="text-xs font-semibold text-[var(--text-secondary)] mb-1">设计理念</h5>
-              <p className="text-xs text-[var(--text-primary)] leading-relaxed">{String(manual.design_philosophy)}</p>
+              <p className="text-xs text-[var(--text-primary)] leading-relaxed">{String(v)}</p>
             </div>
-          )}
+          ))}
         </div>
       ) : manual?.narrative ? (
         <div className="glass-card p-4">

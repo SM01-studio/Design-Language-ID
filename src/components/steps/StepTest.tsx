@@ -1,6 +1,7 @@
 'use client';
 
 import { Loader2 } from 'lucide-react';
+import { when } from '@/lib/render';
 import ScrapeResultsCard from '@/components/common/ScrapeResultsCard';
 
 interface StepProps {
@@ -115,12 +116,12 @@ export default function StepTest({ data, isLoading }: StepProps) {
               );
             })}
           </div>
-          {aggregated?.overall_metrics && (
+          {when(aggregated?.overall_metrics, (metrics) => (
             <div className="mt-3 flex gap-4 text-xs text-[var(--text-secondary)]">
-              <span>平均满意度：{String((aggregated.overall_metrics as Record<string, unknown>).average_satisfaction)}</span>
-              <span>推荐率：{(((aggregated.overall_metrics as Record<string, unknown>).recommendation_rate as number) * 100).toFixed(0)}%</span>
+              <span>平均满意度：{String((metrics as Record<string, unknown>).average_satisfaction)}</span>
+              <span>推荐率：{(((metrics as Record<string, unknown>).recommendation_rate as number) * 100).toFixed(0)}%</span>
             </div>
-          )}
+          ))}
         </div>
       )}
 
