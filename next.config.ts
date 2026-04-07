@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   turbopack: {
-    root: '..',
+    root: process.env.NODE_ENV === 'development' ? '..' : undefined,
   },
 };
 

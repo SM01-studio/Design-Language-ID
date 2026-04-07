@@ -90,16 +90,16 @@ export default function StepAnalyze({ data, isLoading }: StepProps) {
                   </div>
                   <span className="text-xs font-mono text-[var(--accent-green)]">{String(score.score)}</span>
                 </div>
-                {score.strengths && Array.isArray(score.strengths) && (score.strengths as string[]).length > 0 && (
+                {score.strengths && Array.isArray(score.strengths) && ((score.strengths as string[]).length > 0 ? (
                   <p className="text-[10px] text-[var(--text-muted)] mt-1.5">
                     优势：{(score.strengths as string[]).join('；')}
                   </p>
-                )}
-                {score.weaknesses && Array.isArray(score.weaknesses) && (score.weaknesses as string[]).length > 0 && (
+                ) : null)}
+                {score.weaknesses && Array.isArray(score.weaknesses) && ((score.weaknesses as string[]).length > 0 ? (
                   <p className="text-[10px] text-[var(--text-muted)]">
                     不足：{(score.weaknesses as string[]).join('；')}
                   </p>
-                )}
+                ) : null)}
               </div>
             ))}
           </div>
