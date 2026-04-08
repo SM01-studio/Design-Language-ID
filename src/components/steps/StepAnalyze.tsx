@@ -2,6 +2,7 @@
 
 import { Loader2 } from 'lucide-react';
 import ScrapeResultsCard from '@/components/common/ScrapeResultsCard';
+import KbReferencesCard from '@/components/common/KbReferencesCard';
 
 interface StepProps {
   data?: Record<string, unknown>;
@@ -194,6 +195,9 @@ export default function StepAnalyze({ data, isLoading }: StepProps) {
           </div>
         </div>
       )}
+
+      {/* RAG Knowledge Base References */}
+      <KbReferencesCard references={data._kb_references} />
     </div>
   );
 }

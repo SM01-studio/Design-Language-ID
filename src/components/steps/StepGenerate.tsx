@@ -3,6 +3,7 @@
 import { Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
 import { when } from '@/lib/render';
+import KbReferencesCard from '@/components/common/KbReferencesCard';
 
 interface StepProps {
   data?: Record<string, unknown>;
@@ -256,6 +257,9 @@ export default function StepGenerate({ data, isLoading }: StepProps) {
           </div>
         </div>
       ) : null}
+
+      {/* RAG Knowledge Base References */}
+      <KbReferencesCard references={data._kb_references} />
     </div>
   );
 }
