@@ -171,7 +171,10 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
         isScraping: false,
       }));
     } catch (e: any) {
-      set({ error: e.message, isLoading: false, streamingText: '', isScraping: false });
+      const msg = e.message === 'AUTH_EXPIRED'
+        ? '登录状态已过期，请返回主门户重新进入'
+        : e.message;
+      set({ error: msg, isLoading: false, streamingText: '', isScraping: false });
     }
   },
 

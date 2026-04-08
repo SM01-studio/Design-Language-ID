@@ -25,8 +25,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
   });
 
   if (response.status === 401) {
-    window.location.href = `${MAIN_PORTAL}/index.html?from=design-id`;
-    throw new Error('Unauthorized');
+    throw new Error('AUTH_EXPIRED');
   }
 
   if (!response.ok) {
@@ -79,8 +78,7 @@ export const workflowApi = {
     });
 
     if (response.status === 401) {
-      window.location.href = `${MAIN_PORTAL}/index.html?from=design-id`;
-      throw new Error('Unauthorized');
+      throw new Error('AUTH_EXPIRED');
     }
     if (!response.ok) {
       throw new Error('Stream request failed');
@@ -210,8 +208,7 @@ export const exportApi = {
     });
 
     if (response.status === 401) {
-      window.location.href = `${MAIN_PORTAL}/index.html?from=design-id`;
-      throw new Error('Unauthorized');
+      throw new Error('AUTH_EXPIRED');
     }
 
     if (!response.ok) {
@@ -252,8 +249,7 @@ export const exportApi = {
     });
 
     if (response.status === 401) {
-      window.location.href = `${MAIN_PORTAL}/index.html?from=design-id`;
-      throw new Error('Unauthorized');
+      throw new Error('AUTH_EXPIRED');
     }
 
     if (!response.ok) {
