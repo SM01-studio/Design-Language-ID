@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { verifyAuth } from '@/services/api';
 import LandingHero from '@/components/landing/LandingHero';
@@ -12,20 +12,16 @@ import LandingFooter from '@/components/landing/LandingFooter';
 export default function Home() {
   const router = useRouter();
   const [isNavigating, setIsNavigating] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
 
-  const handleGetStarted = async () => {
-    setIsNavigating(true);
-
-    const isLocal = typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-
+  // Entry auth check: redirect to main portal if not logged in
+  useEffect(() => {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isLocal) {
-      localStorage.setItem('auth_token', 'dev-token');
-      router.push('/workspace/new?onboarding=true');
+      setAuthChecked(true);
       return;
     }
 
-    // Check for token in URL first
     const params = new URLSearchParams(window.location.search);
     const token = params.get('auth_token');
     if (token) {
@@ -33,13 +29,31 @@ export default function Home() {
       window.history.replaceState({}, '', window.location.pathname);
     }
 
-    const valid = await verifyAuth();
-    if (valid) {
-      router.push('/workspace/new?onboarding=true');
-    } else {
+    const storedToken = localStorage.getItem('auth_token');
+    if (!storedToken) {
       window.location.href = 'https://siliang.cfd/index.html?from=design-id';
+      return;
     }
+
+    verifyAuth().then((valid) => {
+      if (!valid) {
+        localStorage.removeItem('auth_token');
+        window.location.href = 'https://siliang.cfd/index.html?from=design-id';
+      } else {
+        setAuthChecked(true);
+      }
+    });
+  }, []);
+
+  const handleGetStarted = async () => {
+    setIsNavigating(true);
+    router.push('/workspace/new?onboarding=true');
   };
+
+  // Wait for entry auth check before rendering anything
+  if (!authChecked) {
+    return null;
+  }
 
   if (isNavigating) {
     return (
