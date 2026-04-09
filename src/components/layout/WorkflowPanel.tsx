@@ -36,7 +36,7 @@ const STEP_BG_IMAGES: Record<number, string> = {
 };
 
 export default function WorkflowPanel() {
-  const { project, currentStep, stepData, isLoading, error, clearError, confirmStep, streamingText, isScraping, scrapeStatus } = useWorkflowStore();
+  const { project, currentStep, stepData, isLoading, error, clearError, confirmStep, streamingText, isReloading, isScraping, scrapeStatus } = useWorkflowStore();
 
   if (!project) {
     return (
@@ -103,7 +103,7 @@ export default function WorkflowPanel() {
           {StepComponent && stepData[currentStep] ? (
             <StepComponent data={stepData[currentStep]} isLoading={isLoading} />
           ) : isLoading ? (
-            <StepLoading step={currentStep} streamingText={streamingText} isScraping={isScraping} scrapeStatus={scrapeStatus} />
+            <StepLoading step={currentStep} streamingText={streamingText} isReloading={isReloading} isScraping={isScraping} scrapeStatus={scrapeStatus} />
           ) : null}
         </div>
       </div>
@@ -122,9 +122,10 @@ export default function WorkflowPanel() {
 }
 
 /** 步骤加载中组件 */
-function StepLoading({ step, streamingText, isScraping, scrapeStatus }: {
+function StepLoading({ step, streamingText, isReloading, isScraping, scrapeStatus }: {
   step: number;
   streamingText?: string;
+  isReloading?: boolean;
   isScraping?: boolean;
   scrapeStatus?: {
     status: string;
@@ -222,7 +223,7 @@ function StepLoading({ step, streamingText, isScraping, scrapeStatus }: {
       )}
 
       {/* Streaming text preview */}
-      {hasText && (
+      {hasText && !isReloading && (
         <div className="flex-1 min-h-0">
           <div
             ref={textRef}
@@ -235,6 +236,44 @@ function StepLoading({ step, streamingText, isScraping, scrapeStatus }: {
           </div>
         </div>
       )}
+
+      {/* Post-stream reload indicator (RAG injection / data integration) */}
+      {isReloading && (
+        <ReloadingCard step={step} />
+      )}
+    </div>
+  );
+}
+
+/** RAG / 数据整合中卡片 */
+function ReloadingCard({ step }: { step: number }) {
+  const hasRAG = [2, 3, 4, 6].includes(step);
+  const hasScrape = [3, 5].includes(step);
+
+  const messages: string[] = [];
+  if (hasRAG) messages.push('正在注入 RAG 知识库检索结果');
+  if (hasScrape) messages.push('正在整合市场爬取数据');
+  if (messages.length === 0) messages.push('正在加载完整结果');
+
+  return (
+    <div className="glass-card p-5 mt-4 animate-fade-in">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="w-8 h-8 rounded-lg bg-[var(--accent-blue)]/10 border border-[var(--accent-blue)]/20 flex items-center justify-center">
+          <Loader2 size={14} className="animate-spin text-[var(--accent-blue)]" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-[var(--text-primary)]">数据整合中</p>
+          <p className="text-[10px] text-[var(--text-muted)]">AI 生成已完成，正在处理附加数据</p>
+        </div>
+      </div>
+      <div className="space-y-2">
+        {messages.map((msg, i) => (
+          <div key={i} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--bg-primary)] border border-[var(--border)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-blue)] animate-pulse shrink-0" />
+            <span className="text-xs text-[var(--text-secondary)]">{msg}...</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

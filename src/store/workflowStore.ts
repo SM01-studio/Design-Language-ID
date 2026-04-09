@@ -12,6 +12,7 @@ interface WorkflowStore {
   isChatLoading: boolean;
   streamingText: string;
   error: string | null;
+  isReloading: boolean;
   isScraping: boolean;
   scrapeStatus: {
     status: string;
@@ -59,6 +60,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   isChatLoading: false,
   streamingText: '',
   error: null,
+  isReloading: false,
   isScraping: false,
   scrapeStatus: {
     status: '',
@@ -100,7 +102,7 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
   executeStep: async (step, input) => {
     set({
       isLoading: true, error: null, currentStep: step, streamingText: '',
-      isScraping: false,
+      isReloading: false, isScraping: false,
       scrapeStatus: {
         status: '',
         platforms: {
@@ -157,23 +159,25 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
         // Steps 2-6 all may have RAG or scrape data appended server-side
         const needsReload = (step >= 2 && step <= 6);
         if (needsReload) {
+          set({ isReloading: true });
           result = await reloadStepFromBackend(step);
         }
       } catch {
-        set({ streamingText: '' });
+        set({ streamingText: '', isReloading: true });
         result = await reloadStepFromBackend(step);
       }
       set((state) => ({
         stepData: { ...state.stepData, [step]: result },
         isLoading: false,
         streamingText: '',
+        isReloading: false,
         isScraping: false,
       }));
     } catch (e: any) {
       const msg = e.message === 'AUTH_EXPIRED'
         ? '登录状态已过期，请返回主门户重新进入'
         : e.message;
-      set({ error: msg, isLoading: false, streamingText: '', isScraping: false });
+      set({ error: msg, isLoading: false, streamingText: '', isReloading: false, isScraping: false });
     }
   },
 
