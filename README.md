@@ -1,6 +1,6 @@
 # Design Language Translation AI — ID Showflat
 
-https://github.com/SM01-studio/Design-Language-ID/releases/download/untagged-0cf762d2ee320afe682a/ID-01-compressed.mp4
+https://github.com/user-attachments/assets/192a6d58-4748-4e35-81b7-54e8dda57cdf
 
 > An AI-powered system that translates vague interior design requirements into quantifiable, professional design specifications for residential showflat projects through a rigorous 6-step interactive workflow.
 
