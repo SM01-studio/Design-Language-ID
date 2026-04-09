@@ -37,7 +37,7 @@ export default function Home() {
       return;
     }
 
-    verifyAuth(true).then((valid) => {
+    verifyAuth().then((valid) => {
       if (!valid) {
         localStorage.removeItem('auth_token');
         window.location.href = MAIN_PORTAL;
