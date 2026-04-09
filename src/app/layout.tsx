@@ -13,54 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className="h-full antialiased">
-      <head>
-        {/* Instant loading screen — renders before React hydrates */}
-        <style dangerouslySetInnerHTML={{ __html: `
-          #app-loader {
-            position: fixed; inset: 0; z-index: 9999;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: #1E1C1A;
-            font-family: system-ui, -apple-system, sans-serif;
-          }
-          #app-loader .brand {
-            font-size: 15px; font-weight: 600;
-            color: #F0EDED; letter-spacing: 0.5px;
-            margin-bottom: 20px;
-          }
-          #app-loader .brand span { color: #D97706; }
-          #app-loader .ring {
-            width: 36px; height: 36px;
-            border: 2.5px solid rgba(255,255,255,0.1);
-            border-top-color: #D97706;
-            border-radius: 50%;
-            animation: _spin 0.8s linear infinite;
-          }
-          #app-loader .label {
-            margin-top: 16px;
-            font-size: 12px;
-            color: rgba(255,255,255,0.4);
-            line-height: 1.6;
-            text-align: center;
-          }
-          @keyframes _spin { to { transform: rotate(360deg); } }
-        ` }} />
-        <script dangerouslySetInnerHTML={{ __html: `
-          (function(){
-            var d=document,s=d.getElementById('app-loader');
-            function rm(){if(s&&s.parentNode)s.parentNode.removeChild(s)}
-            if(d.readyState==='complete')rm();
-            else window.addEventListener('load',rm);
-            setTimeout(rm,15000);
-          })();
-        ` }} />
-      </head>
       <body className="min-h-full bg-[var(--bg-primary)] text-[var(--text-primary)] font-body">
-        <div id="app-loader">
-          <p className="brand">Design Language <span>ID</span></p>
-          <div className="ring" />
-          <p className="label">正在验证身份并加载资源，请稍候</p>
-        </div>
         {children}
       </body>
     </html>
