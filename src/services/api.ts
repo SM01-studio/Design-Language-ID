@@ -279,13 +279,15 @@ export const exportApi = {
 };
 
 // Auth
-export async function verifyAuth(): Promise<boolean> {
+export async function verifyAuth(fresh = false): Promise<boolean> {
   try {
     const token = getToken();
     if (!token) return false;
 
-    const response = await fetch(`${API_BASE_URL}/verify`, {
+    const endpoint = fresh ? '/verify-fresh' : '/verify';
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers: { Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(8000),
     });
     return response.ok;
   } catch {

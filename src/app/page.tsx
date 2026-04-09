@@ -9,12 +9,14 @@ import LandingFeatures from '@/components/landing/LandingFeatures';
 import LandingCTA from '@/components/landing/LandingCTA';
 import LandingFooter from '@/components/landing/LandingFooter';
 
+const MAIN_PORTAL = 'https://siliang.cfd/index.html?from=design-id';
+
 export default function Home() {
   const router = useRouter();
   const [isNavigating, setIsNavigating] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
 
-  // Entry auth check: redirect to main portal if not logged in
+  // Entry auth check: fresh verify (bypasses backend cache) → redirect if invalid
   useEffect(() => {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     if (isLocal) {
@@ -31,14 +33,14 @@ export default function Home() {
 
     const storedToken = localStorage.getItem('auth_token');
     if (!storedToken) {
-      window.location.href = 'https://siliang.cfd/index.html?from=design-id';
+      window.location.href = MAIN_PORTAL;
       return;
     }
 
-    verifyAuth().then((valid) => {
+    verifyAuth(true).then((valid) => {
       if (!valid) {
         localStorage.removeItem('auth_token');
-        window.location.href = 'https://siliang.cfd/index.html?from=design-id';
+        window.location.href = MAIN_PORTAL;
       } else {
         setAuthChecked(true);
       }
@@ -50,9 +52,23 @@ export default function Home() {
     router.push('/workspace/new?onboarding=true');
   };
 
-  // Wait for entry auth check before rendering anything
+  // Loading screen while checking auth
   if (!authChecked) {
-    return null;
+    return (
+      <div className="flex h-screen flex-col items-center justify-center bg-[#1E1C1A]">
+        <div className="relative w-12 h-12 mb-4">
+          <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="2.5" />
+            <circle cx="24" cy="24" r="20" fill="none" stroke="#D97706" strokeWidth="2.5"
+              strokeLinecap="round" strokeDasharray={125.6} className="animate-[spin_1s_linear_infinite]" />
+          </svg>
+          <span className="absolute inset-0 flex items-center justify-center text-xs font-mono text-[#D97706]">
+            ID
+          </span>
+        </div>
+        <p className="text-sm text-white/60">正在验证身份...</p>
+      </div>
+    );
   }
 
   if (isNavigating) {
