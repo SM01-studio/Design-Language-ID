@@ -153,10 +153,9 @@ export const useWorkflowStore = create<WorkflowStore>((set, get) => ({
             }
           },
         );
-        // For split steps (4/5/6) or steps with scrape data (3/5), reload from backend
-        // to get the complete saved data (including _scrape_results)
-        const needsReload = (step === 4 || step === 5 || step === 6) ||
-          ((step === 3 || step === 5) && !('_scrape_results' in result));
+        // Reload from backend to get complete saved data (_kb_references, _scrape_results)
+        // Steps 2-6 all may have RAG or scrape data appended server-side
+        const needsReload = (step >= 2 && step <= 6);
         if (needsReload) {
           result = await reloadStepFromBackend(step);
         }
