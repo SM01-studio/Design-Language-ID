@@ -23,17 +23,25 @@ export default function RootLayout({
             background: #1E1C1A;
             font-family: system-ui, -apple-system, sans-serif;
           }
+          #app-loader .brand {
+            font-size: 15px; font-weight: 600;
+            color: #F0EDED; letter-spacing: 0.5px;
+            margin-bottom: 20px;
+          }
+          #app-loader .brand span { color: #D97706; }
           #app-loader .ring {
-            width: 44px; height: 44px;
+            width: 36px; height: 36px;
             border: 2.5px solid rgba(255,255,255,0.1);
             border-top-color: #D97706;
             border-radius: 50%;
             animation: _spin 0.8s linear infinite;
           }
           #app-loader .label {
-            margin-top: 14px;
-            font-size: 13px;
-            color: rgba(255,255,255,0.5);
+            margin-top: 16px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.6;
+            text-align: center;
           }
           @keyframes _spin { to { transform: rotate(360deg); } }
         ` }} />
@@ -49,8 +57,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full bg-[var(--bg-primary)] text-[var(--text-primary)] font-body">
         <div id="app-loader">
+          <p className="brand">Design Language <span>ID</span></p>
           <div className="ring" />
-          <p className="label">正在验证身份...</p>
+          <p className="label">正在验证身份并加载资源，请稍候</p>
         </div>
         {children}
       </body>
