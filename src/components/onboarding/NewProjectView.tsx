@@ -167,12 +167,7 @@ export default function NewProjectView() {
             />
           </label>
 
-          {isUploading && (
-            <div className="flex items-center gap-2 mt-4 justify-center">
-              <Loader2 size={14} className="animate-spin text-[var(--accent-green)]" />
-              <span className="text-xs text-[var(--text-secondary)]">正在解析文档...</span>
-            </div>
-          )}
+          {isUploading && <ParsingTimer />}
         </div>
 
         {/* File preview + start button */}
@@ -261,6 +256,48 @@ function CreatingTimer() {
         </span>
       </div>
       <span className="text-sm text-white">正在创建项目并启动 AI 分析...</span>
+    </div>
+  );
+}
+
+/** 文档解析计时组件 */
+function ParsingTimer() {
+  const [seconds, setSeconds] = useState(0);
+  const startTime = useRef(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSeconds(Math.floor((Date.now() - startTime.current) / 1000));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-3 mt-4 justify-center">
+      <div className="relative w-8 h-8">
+        <svg className="w-8 h-8 -rotate-90" viewBox="0 0 40 40">
+          <circle
+            cx="20" cy="20" r="18"
+            fill="none"
+            stroke="rgba(34,197,94,0.15)"
+            strokeWidth="2.5"
+          />
+          <circle
+            cx="20" cy="20" r="18"
+            fill="none"
+            stroke="var(--accent-green)"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeDasharray={2 * Math.PI * 18}
+            strokeDashoffset={2 * Math.PI * 18 * (1 - (seconds % 60) / 60)}
+            className="transition-all duration-1000 ease-linear"
+          />
+        </svg>
+        <span className="absolute inset-0 flex items-center justify-center text-[9px] font-mono text-[var(--accent-green)]">
+          {seconds}
+        </span>
+      </div>
+      <span className="text-xs text-[var(--text-secondary)]">正在解析文档...</span>
     </div>
   );
 }
