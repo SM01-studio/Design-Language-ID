@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { verifyAuth } from '@/services/api';
 import LandingHero from '@/components/landing/LandingHero';
@@ -15,6 +15,38 @@ export default function Home() {
   const router = useRouter();
   const [isNavigating, setIsNavigating] = useState(false);
 
+  // Background auth check: redirect if not logged in (non-blocking)
+  useEffect(() => {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    if (isLocal) {
+      localStorage.setItem('auth_token', 'dev-token');
+      return;
+    }
+
+    // Save token from URL if present
+    const params = new URLSearchParams(window.location.search);
+    const urlToken = params.get('auth_token');
+    if (urlToken) {
+      localStorage.setItem('auth_token', urlToken);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    // No token at all → redirect immediately
+    const storedToken = localStorage.getItem('auth_token');
+    if (!storedToken) {
+      window.location.href = MAIN_PORTAL;
+      return;
+    }
+
+    // Has token → verify in background
+    verifyAuth().then((valid) => {
+      if (!valid) {
+        localStorage.removeItem('auth_token');
+        window.location.href = MAIN_PORTAL;
+      }
+    });
+  }, []);
+
   const handleGetStarted = async () => {
     setIsNavigating(true);
 
@@ -25,18 +57,11 @@ export default function Home() {
       return;
     }
 
-    // Save token from URL if present
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('auth_token');
-    if (token) {
-      localStorage.setItem('auth_token', token);
-      window.history.replaceState({}, '', window.location.pathname);
-    }
-
     const valid = await verifyAuth();
     if (valid) {
       router.push('/workspace/new?onboarding=true');
     } else {
+      localStorage.removeItem('auth_token');
       window.location.href = MAIN_PORTAL;
     }
   };

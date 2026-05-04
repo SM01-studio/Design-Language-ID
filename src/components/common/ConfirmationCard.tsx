@@ -3,7 +3,7 @@
 import { useWorkflowStore } from '@/store/workflowStore';
 import { STEP_NAMES } from '@/types';
 import { Check, ChevronRight, Plus, FileText, FileDown, Package, BookOpen } from 'lucide-react';
-import { exportApi } from '@/services/api';
+import { exportApi, API_BASE_URL, getToken } from '@/services/api';
 import { useState } from 'react';
 
 interface ConfirmationCardProps {
@@ -43,10 +43,10 @@ export default function ConfirmationCard({ step, onConfirm }: ConfirmationCardPr
     if (!project || isExporting) return;
     setIsExporting(true);
     try {
-      const token = localStorage.getItem('auth_token') || 'dev-token';
+      const token = getToken();
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'https://api.siliang.cfd/api/design-id'}/projects/${project.id}/export-merged?format=${format}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${API_BASE_URL}/projects/${project.id}/export-merged?format=${format}`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} }
       );
       if (!res.ok) throw new Error('Export failed');
       const blob = await res.blob();

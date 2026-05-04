@@ -42,7 +42,7 @@ export default function StepEmpathize({ data, isLoading }: StepProps) {
           </h4>
           <div className="space-y-3">
             {empathyMap.map((item, i) => (
-              <div key={item.scenario_id || i} className="p-3 rounded-lg bg-[var(--bg-primary)] border border-[var(--border)]">
+              <div key={`${item.scenario_id}-${i}`} className="p-3 rounded-lg bg-[var(--bg-primary)] border border-[var(--border)]">
                 <div className="text-xs font-medium mb-2 text-[var(--accent-blue)]">
                   {item.scenario_id}
                 </div>

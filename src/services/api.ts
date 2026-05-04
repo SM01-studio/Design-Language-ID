@@ -1,9 +1,9 @@
 import type { Project, StepData, ChatMessage } from '@/types';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.siliang.cfd/api/design-id';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.siliang.cfd/api/design-id';
 const MAIN_PORTAL = 'https://siliang.cfd';
 
-function getToken(): string | null {
+export function getToken(): string | null {
   if (typeof window === 'undefined') return null;
   return localStorage.getItem('auth_token') ||
     new URLSearchParams(window.location.search).get('auth_token');
